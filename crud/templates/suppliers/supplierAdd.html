@@ -44,12 +44,16 @@
 
         <div>
           <label for="phone_number" class="block text-xs font-semibold uppercase tracking-widest text-[#c9a84c] mb-3">Phone Number</label>
-          <input type="text" 
-                placeholder="0951-234-5689" 
-                 name="phone_number" 
-                 id="phone_number"
-                 class="w-full px-4 py-3 rounded-lg border border-[#d9cdb8] bg-white text-[#1a3328] text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3328] transition dark:bg-gray-900 dark:text-white dark:border-gray-700 dark:focus:ring-white dark:placeholder-slate-400">
-                  <p id="phone-error" class="hidden text-xs mt-1 text-red-500">Please enter a valid phone number.</p>
+          <input type="tel" 
+                placeholder="0951-234-5689"
+                required
+                inputmode='numeric'
+                oninput="this.value = this.value.replace(/[^0-9\-]/g, '')"
+                pattern='[0-9\-]+'
+                name="phone_number" 
+                id="phone_number"
+                class="w-full px-4 py-3 rounded-lg border border-[#d9cdb8] bg-white text-[#1a3328] text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3328] transition dark:bg-gray-900 dark:text-white dark:border-gray-700 dark:focus:ring-white dark:placeholder-slate-400">
+                <p id="phone-error" class="hidden text-xs mt-1 text-red-500">Please enter a valid phone number.</p>
         </div>
 
         <div class="md:col-span-2">
@@ -79,9 +83,6 @@
         <button type="submit" class="bg-[#c9a84c] text-[#1a1a1a] text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#b8922f] transition-all">
           Save Supplier
         </button>
-        <a href="{% url 'supplier_list' %}" class="text-sm font-semibold text-[#6b6455] hover:text-[#1a3328] transition-colors dark:text-slate-400 dark:hover:text-slate-100">
-          Cancel
-        </a>
       </div>
     </form>
   </div>

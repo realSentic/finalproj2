@@ -661,6 +661,10 @@ def request_email_change(request):
         if not check_password(current_password, admin.password):
             messages.error(request, 'Current password is incorrect.')
             return redirect('admin_settings')
+        
+        if new_email == admin.email:
+            messages.error(request, 'New email must be different from your current email.')
+            return redirect('admin_settings')
 
         if Admins.objects.filter(email=new_email).exclude(admin_id=admin.admin_id).exists():
             messages.error(request, 'That email is already in use.')

@@ -4,124 +4,165 @@
 
 {% block 'content' %}
 
-<div class="p-6">
+<div class="p-3 sm:p-6">
 
-    <div class="flex items-center justify-between mb-6">
+  <!-- Header -->
+  <div class="flex flex-col mt-15 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold text-[#1a3328] dark:text-gray-100">Audit Log</h1>
+      <p class="text-xs sm:text-sm text-[#6b6455] dark:text-gray-400 mt-0.5">Full history of all inventory actions</p>
+    </div>
+    <span class="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#d9cdb8] dark:border-gray-700 text-[#6b6455] dark:text-gray-400 bg-white dark:bg-gray-800 self-start sm:self-auto">
+      {{ logs.paginator.count }} record{{ logs.paginator.count|pluralize }}
+    </span>
+  </div>
+
+  <!-- DESKTOP TABLE -->
+  <div class="hidden sm:block rounded-xl border border-[#d9cdb8] dark:border-gray-700 overflow-x-auto shadow-sm">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-[#1a3328] text-white dark:bg-[#c9a84c] dark:text-[#1f1b12]/80 uppercase tracking-wider">
+        <tr>
+          <th class="px-4 py-3 w-28">Action</th>
+          <th class="px-4 py-3 w-36">Model</th>
+          <th class="px-4 py-3 w-36">Admin</th>
+          <th class="px-4 py-3">Description</th>
+          <th class="px-4 py-3 text-right w-48">Date & Time</th>
+        </tr>
+      </thead>
+      <tbody class="bg-[#f5f0e8] dark:bg-gray-900">
+        {% for log in logs %}
+        <tr class="border-t border-[#d9cdb8] dark:border-gray-700 hover:bg-[#ede5d4] dark:hover:bg-gray-800 transition-colors">
+
+          <td class="px-4 py-3">
+            {% if log.action == 'create' %}
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+                Added
+              </span>
+            {% elif log.action == 'update' %}
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 230.3 291.7 100.3z"/></svg>
+                Updated
+              </span>
+            {% elif log.action == 'delete' %}
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                Deleted
+              </span>
+            {% endif %}
+          </td>
+
+          <td class="px-4 py-3">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">{{ log.model_name }}</span>
+          </td>
+
+          <td class="px-4 py-3">
+            {% if log.performed_by %}
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">
+                {{ log.performed_by.first_name }} {{ log.performed_by.last_name }}
+              </span>
+            {% else %}
+              <span class="text-xs text-[#6b6455] dark:text-gray-400 italic">—</span>
+            {% endif %}
+          </td>
+
+          <td class="px-4 py-3 text-[#1a3328] dark:text-gray-100 font-medium">{{ log.description }}</td>
+
+          <td class="px-4 py-3 text-right">
+            <p class="text-[#1a3328] dark:text-gray-100 font-medium">{{ log.performed_at|date:"M j, Y" }}</p>
+            <p class="text-xs text-[#6b6455] dark:text-gray-400">{{ log.performed_at|date:"g:i A" }}</p>
+          </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="px-4 py-16 text-center text-[#6b6455] dark:text-gray-400 italic text-sm bg-[#f5f0e8] dark:bg-gray-900">
+            No activity logged yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="sm:hidden space-y-2">
+    {% for log in logs %}
+    <div class="bg-[#f5f0e8] dark:bg-gray-900 border border-[#d9cdb8] dark:border-gray-700 rounded-lg p-3">
+
+      <!-- Top row: action badge + date -->
+      <div class="flex items-start justify-between gap-2 mb-2">
+        {% if log.action == 'create' %}
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+            Added
+          </span>
+        {% elif log.action == 'update' %}
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 230.3 291.7 100.3z"/></svg>
+            Updated
+          </span>
+        {% elif log.action == 'delete' %}
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+            Deleted
+          </span>
+        {% endif %}
+
+        <div class="text-right shrink-0">
+          <p class="text-xs font-medium text-[#1a3328] dark:text-gray-100">{{ log.performed_at|date:"M j, Y" }}</p>
+          <p class="text-[10px] text-[#6b6455] dark:text-gray-400">{{ log.performed_at|date:"g:i A" }}</p>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <p class="text-xs font-medium text-[#1a3328] dark:text-gray-100 mb-2">{{ log.description }}</p>
+
+      <!-- Model + Admin row -->
+      <div class="grid grid-cols-2 gap-2 border-t border-[#d9cdb8] dark:border-gray-700 pt-2">
         <div>
-            <h1 class="text-2xl font-bold text-[#1a3328] dark:text-gray-100">Audit Log</h1>
-            <p class="text-sm text-[#6b6455] dark:text-gray-400 mt-0.5">Full history of all inventory actions</p>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold mb-0.5">Model</p>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">{{ log.model_name }}</span>
         </div>
-        <span class="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#d9cdb8] dark:border-gray-700 text-[#6b6455] dark:text-gray-400 bg-white dark:bg-gray-800">
-        {{ logs.paginator.count }} record{{ logs.paginator.count|pluralize }}
-        </span>
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold mb-0.5">Admin</p>
+          {% if log.performed_by %}
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">
+              {{ log.performed_by.first_name }} {{ log.performed_by.last_name }}
+            </span>
+          {% else %}
+            <span class="text-xs text-[#6b6455] dark:text-gray-400 italic">—</span>
+          {% endif %}
+        </div>
+      </div>
+
     </div>
-
-    <div class="rounded-xl border border-[#d9cdb8] dark:border-gray-700 overflow-hidden shadow-sm">
-        <table class="w-full text-sm text-left">
-
-            <thead class="bg-[#c9a84c] text-[#1f1b12]/80 text-xs uppercase tracking-wider">
-                <tr>
-                    <th class="px-4 py-3 w-28">Action</th>
-                    <th class="px-4 py-3 w-36">Model</th>
-                    <th class="px-4 py-3 w-36">Admin</th> <!-- ✅ added -->
-                    <th class="px-4 py-3">Description</th>
-                    <th class="px-4 py-3 text-right w-48">Date & Time</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for log in logs %}
-                <tr class="border-t border-[#d9cdb8] dark:border-gray-700 hover:bg-[#ede5d4] dark:hover:bg-gray-800 transition-colors bg-[#f5f0e8] dark:bg-gray-900">
-
-                    <td class="px-4 py-3">
-                        {% if log.action == 'create' %}
-                            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512">
-                                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
-                                </svg>
-                                Added
-                            </span>
-                        {% elif log.action == 'update' %}
-                            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 512 512">
-                                    <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 230.3 291.7 100.3z"/>
-                                </svg>
-                                Updated
-                            </span>
-                        {% elif log.action == 'delete' %}
-                            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 448 512">
-                                    <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
-                                </svg>
-                                Deleted
-                            </span>
-                        {% endif %}
-                    </td>
-
-                    <td class="px-4 py-3">
-                        <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">{{ log.model_name }}</span>
-                    </td>
-
-                    <td class="px-4 py-3">
-                        {% if log.performed_by %}
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#1a3328]/10 dark:bg-gray-700 text-[#1a3328] dark:text-gray-100">
-                                {{ log.performed_by.first_name }} {{ log.performed_by.last_name }}
-                            </span>
-                        {% else %}
-                            <span class="text-xs text-[#6b6455] dark:text-gray-400 italic">—</span>
-                        {% endif %}
-                    </td>
-
-                    <td class="px-4 py-3 text-[#1a3328] dark:text-gray-100 font-medium">{{ log.description }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <p class="text-[#1a3328] dark:text-gray-100 font-medium">{{ log.performed_at|date:"M j, Y" }}</p>
-                        <p class="text-xs text-[#6b6455] dark:text-gray-400">{{ log.performed_at|date:"g:i A" }}</p>
-                    </td>
-
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="px-4 py-16 text-center text-[#6b6455] dark:text-gray-400 italic text-sm bg-[#f5f0e8] dark:bg-gray-900"> <!-- ✅ 4 → 5 -->
-                        No activity logged yet.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-
-        </table>
+    {% empty %}
+    <div class="text-center py-10 text-[#6b6455] dark:text-gray-400 text-sm italic border border-[#d9cdb8] dark:border-gray-700 rounded-lg">
+      No activity logged yet.
     </div>
+    {% endfor %}
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 px-1 text-sm text-[#6b6455] dark:text-gray-400">
+    <span>Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
+    <div class="flex gap-2">
+      {% if logs.has_previous %}
+        <a href="?page={{ logs.previous_page_number }}"
+           class="px-3 py-1 border border-[#d9cdb8] dark:border-gray-700 rounded-lg bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 text-[#1a3328] dark:text-gray-100 font-semibold transition-all">
+          Prev
+        </a>
+      {% endif %}
+      {% if logs.has_next %}
+        <a href="?page={{ logs.next_page_number }}"
+           class="px-3 py-1 border border-[#d9cdb8] dark:border-gray-700 rounded-lg bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 text-[#1a3328] dark:text-gray-100 font-semibold transition-all">
+          Next
+        </a>
+      {% endif %}
+    </div>
+  </div>
 
 </div>
 
-<div class="p-6">
-
-    <div class="rounded-xl border border-[#d9cdb8] dark:border-gray-700 overflow-hidden shadow-sm w-full">
-
-        <div class="flex justify-between items-center px-4 py-3 border-t border-[#d9cdb8] dark:border-gray-700 bg-[#f5f0e8] dark:bg-gray-900 text-sm w-full">
-
-            <div class="text-[#6b6455] dark:text-gray-400">
-                Page {{ logs.number }} of {{ logs.paginator.num_pages }}
-            </div>
-
-            <div class="flex gap-2">
-                {% if logs.has_previous %}
-                    <a href="?page={{ logs.previous_page_number }}"
-                       class="px-3 py-1 border border-[#d9cdb8] dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700">
-                        Prev
-                    </a>
-                {% endif %}
-
-                {% if logs.has_next %}
-                    <a href="?page={{ logs.next_page_number }}"
-                       class="px-3 py-1 border border-[#d9cdb8] dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700">
-                        Next
-                    </a>
-                {% endif %}
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 {% endblock 'content' %}
