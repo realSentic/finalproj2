@@ -1,0 +1,510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — Kissy Cafe</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet"/>
+  <script src="{% static 'js/hide_toast.js' %}" defer></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    .page-wrap *, .page-wrap *::before, .page-wrap *::after { margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .bg-hero {
+      background-image: url('{% static "images/coffee.webp" %}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed; /* Keeps the image still while scrolling */
+    }
+
+    /* Subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .a1 { animation: fadeUp 0.45s ease both; }
+    .a2 { animation: fadeUp 0.45s 0.07s ease both; }
+    .a3 { animation: fadeUp 0.45s 0.14s ease both; }
+
+    /* Brand */
+    .brand {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+    .brand-eye {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .brand-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.1rem;
+      color: #1a3328;
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .brand-name em {
+      font-style: italic;
+      color: #c9a84c;
+    }
+
+    /* Card */
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e4dfd6;
+      padding: 32px 30px 28px;
+      box-shadow: 0 2px 28px rgba(26,51,40,0.07);
+    }
+
+    .card-head {
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1a3328;
+      letter-spacing: -0.02em;
+    }
+    .card-sub {
+      font-size: 0.75rem;
+      color: #9a9186;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    /* Divider */
+    .divider {
+      height: 2px;
+      background: linear-gradient(to right, #1a3328, #c9a84c, transparent);
+      opacity: 0.3;
+      border-radius: 99px;
+      margin: 18px 0 22px;
+    }
+
+    /* Non-field errors */
+    .form-errors {
+      background: #fff5f5;
+      border: 1px solid #e8b4b4;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 16px;
+    }
+    .form-errors p {
+      font-size: 0.76rem;
+      color: #8a2020;
+      font-weight: 600;
+    }
+
+    /* Field */
+    .field { margin-bottom: 14px; }
+
+    .field-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #4a6a5a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+
+    .field-wrap { position: relative; }
+
+    .field-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      opacity: 0.4;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 40px;
+      background: #faf8f4;
+      border: 1.5px solid #e4dfd6;
+      border-radius: 10px;
+      padding: 0 12px 0 34px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #1a3328;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .field-input::placeholder { color: #c0b8ae; font-weight: 400; }
+    .field-input:focus {
+      border-color: #1a3328;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26,51,40,0.07);
+    }
+    .field-input.no-icon { padding-left: 12px; }
+
+    /* password toggle */
+    .pw-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.4;
+      display: flex;
+      align-items: center;
+      transition: opacity 0.15s;
+    }
+    .pw-eye:hover { opacity: 0.7; }
+    .field-input.has-eye { padding-right: 34px; }
+
+    /* field errors */
+    .field-err {
+      font-size: 0.68rem;
+      color: #a32d2d;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* help text */
+    .field-help {
+      font-size: 0.68rem;
+      color: #9a9186;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* two-col row */
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* submit */
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      background: #1a3328;
+      color: #f5f0e8;
+      border: none;
+      border-radius: 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+    }
+    .submit-btn:hover {
+      background: #0f2418;
+      box-shadow: 0 4px 16px rgba(26,51,40,0.22);
+      transform: translateY(-1px);
+    }
+    .submit-btn:active { transform: translateY(0); box-shadow: none; }
+
+    /* footer */
+    .card-footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 0.76rem;
+      color: #9a9186;
+      font-weight: 500;
+    }
+    .card-footer a {
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .card-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 18px 20px; }
+      .row2 { grid-template-columns: 1fr; gap: 0; }
+    }
+  </style>
+</head>
+<body class="bg-hero bg-[#1a3a1d]/70">
+
+  <div class="fixed inset-0 z-[-1] overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center scale-110 blur-[8px]" 
+        style="background-image: url('{% static "images/coffee.webp" %}');">
+    </div>
+    
+    <div class="absolute inset-0 bg-[#1a3328]/70"></div>
+    
+    <div class="absolute inset-0 opacity-[0.03]" 
+        style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);">
+    </div>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- Brand -->
+    <div class="brand a1">
+      <p class="brand-eye">Inventory System</p>
+      <p class="brand-name">Kissy <em>Cafe</em></p>
+    </div>
+
+    <!-- Card -->
+    <div class="card a2">
+      <div class="card-head">
+        <h1 class="card-title">Create an account</h1>
+        <p class="card-sub">Fill in the details below to get started</p>
+      </div>
+      <div class="divider"></div>
+
+      {% if form.non_field_errors %}
+      <div class="form-errors">
+        {% for error in form.non_field_errors %}
+        <p>⚠ {{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <!-- First & Last Name -->
+        <div class="row2">
+          <div class="field">
+            <label class="field-label" for="id_first_name">First name</label>
+            <div class="field-wrap">
+              <input type="text" id="id_first_name" name="first_name"
+                class="field-input no-icon" placeholder="Jose"
+                value="{{ form.first_name.value|default:'' }}"
+                autocomplete="given-name">
+            </div>
+            {% for error in form.first_name.errors %}
+            <p class="field-err">✕ {{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="id_last_name">Last name</label>
+            <div class="field-wrap">
+              <input type="text" id="id_last_name" name="last_name"
+                class="field-input no-icon" placeholder="Rizal"
+                value="{{ form.last_name.value|default:'' }}"
+                autocomplete="family-name">
+            </div>
+            {% for error in form.last_name.errors %}
+            <p class="field-err">✕ {{ error }}</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="field">
+          <label class="field-label" for="id_username">Username</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 448 512">
+                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="id_username"
+              name="username"
+              class="field-input"
+              placeholder="e.g. maria.santos"
+              value="{{ form.username.value|default:'' }}"
+              autocomplete="username"
+            >
+          </div>
+          {% if form.username.help_text %}
+          <p class="field-help">{{ form.username.help_text }}</p>
+          {% endif %}
+          {% for error in form.username.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Email -->
+        <div class="field">
+          <label class="field-label" for="id_email">Email address</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 512 512">
+                <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
+              </svg>
+            </span>
+            <input
+              type="email"
+              id="id_email"
+              name="email"
+              class="field-input"
+              placeholder="you@example.com"
+              value="{{ form.email.value|default:'' }}"
+              autocomplete="email"
+            >
+          </div>
+          {% for error in form.email.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Registration Key -->
+        <div class="field">
+          <label class="field-label" for="id_registration_key">Registration key</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 512 512">
+                <path d="M336 352c97.2 0 176-78.8 176-176S433.2 0 336 0S160 78.8 160 176c0 18.7 2.9 36.8 8.3 53.7L7 391c-4.5 4.5-7 10.6-7 17v80c0 13.3 10.7 24 24 24h80c13.3 0 24-10.7 24-24V448h40c13.3 0 24-10.7 24-24V384h40c6.4 0 12.5-2.5 17-7l33.3-33.3c16.9 5.4 35 8.3 53.7 8.3zm40-176c-22.1 0-40-17.9-40-40s17.9-40 40-40s40 17.9 40 40s-17.9 40-40 40z"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="id_registration_key"
+              name="registration_key"
+              class="field-input has-eye"
+              placeholder="Enter your registration key"
+            >
+            <button type="button" class="pw-eye" onclick="togglePw('id_registration_key', this)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#1a3328" viewBox="0 0 576 512">
+                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.4 0-14.5-1.2-21.1-3.5c-5.9 17.6-9.3 36.7-9.3 56.5c0 92.4 74.9 167.4 167.3 168A168 168 0 1 0 144 256.3c0-.1 0-.2 0-.3z"/>
+              </svg>
+            </button>
+          </div>
+          {% for error in form.registration_key.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Password -->
+        <div class="field">
+          <label class="field-label" for="id_password">Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 448 512">
+                <path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="id_password"
+              name="password"
+              class="field-input has-eye"
+              placeholder="Min. 8 characters"
+              autocomplete="new-password"
+            >
+            <button type="button" class="pw-eye" onclick="togglePw('id_password', this)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#1a3328" viewBox="0 0 576 512">
+                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.4 0-14.5-1.2-21.1-3.5c-5.9 17.6-9.3 36.7-9.3 56.5c0 92.4 74.9 167.4 167.3 168A168 168 0 1 0 144 256.3c0-.1 0-.2 0-.3z"/>
+              </svg>
+            </button>
+          </div>
+          <!-- strength meter -->
+          <div style="display:flex;gap:4px;margin-top:7px;" id="str-bars">
+            <div id="sb1" style="flex:1;height:3px;border-radius:99px;background:#f0ece4;transition:background .3s;"></div>
+            <div id="sb2" style="flex:1;height:3px;border-radius:99px;background:#f0ece4;transition:background .3s;"></div>
+            <div id="sb3" style="flex:1;height:3px;border-radius:99px;background:#f0ece4;transition:background .3s;"></div>
+            <div id="sb4" style="flex:1;height:3px;border-radius:99px;background:#f0ece4;transition:background .3s;"></div>
+          </div>
+          <p id="str-hint" class="field-help">Use 8+ characters with letters, numbers & symbols.</p>
+          {% for error in form.password.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#f5f0e8" viewBox="0 0 448 512">
+            <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/>
+          </svg>
+          Create Account
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <p class="card-footer a3">
+      Already have an account? <a href="{% url 'signin' %}">Sign in →</a>
+    </p>
+
+  </div>
+
+  {% include "include/Toast.html" %}
+
+  <script>
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      btn.style.opacity = inp.type === 'text' ? '0.75' : '0.4';
+    }
+
+    // Password strength
+    const pwInp  = document.getElementById('id_password');
+    const bars   = [document.getElementById('sb1'), document.getElementById('sb2'), document.getElementById('sb3'), document.getElementById('sb4')];
+    const hint   = document.getElementById('str-hint');
+    const colors = { weak: '#e87070', fair: '#c9a84c', strong: '#1a7a5a' };
+    const hints  = ['', 'Too short', 'Getting there…', 'Almost strong', '✓ Strong password'];
+
+    pwInp.addEventListener('input', () => {
+      const v = pwInp.value;
+      let s = 0;
+      if (v.length >= 8)          s++;
+      if (/[A-Z]/.test(v))        s++;
+      if (/[0-9]/.test(v))        s++;
+      if (/[^A-Za-z0-9]/.test(v)) s++;
+
+      const c = s <= 1 ? colors.weak : s <= 2 ? colors.fair : colors.strong;
+      bars.forEach((b, i) => b.style.background = i < s ? c : '#f0ece4');
+
+      hint.textContent  = v.length ? (hints[s] || hints[0]) : 'Use 8+ characters with letters, numbers & symbols.';
+      hint.style.color  = v.length ? (s <= 1 ? '#a32d2d' : s <= 2 ? '#8a5200' : '#0a5240') : '#9a9186';
+      hint.style.fontWeight = s >= 3 ? '600' : '400';
+    });
+  </script>
+
+</body>
+</html>

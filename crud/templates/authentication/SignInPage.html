@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — Kissy Cafe</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet"/>
+  <script src="{% static 'js/hide_toast.js' %}" defer></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    .page-wrap *, .page-wrap *::before, .page-wrap *::after { margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .a1 { animation: fadeUp 0.45s ease both; }
+    .a2 { animation: fadeUp 0.45s 0.07s ease both; }
+    .a3 { animation: fadeUp 0.45s 0.14s ease both; }
+
+    .brand { text-align: center; margin-bottom: 26px; }
+    .brand-eye {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .brand-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.1rem;
+      color: #1a3328;
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .brand-name em { font-style: italic; color: #c9a84c; }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e4dfd6;
+      padding: 32px 30px 28px;
+      box-shadow: 0 2px 28px rgba(26,51,40,0.07);
+    }
+    .card-head { margin-bottom: 6px; }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1a3328;
+      letter-spacing: -0.02em;
+    }
+    .card-sub {
+      font-size: 0.75rem;
+      color: #9a9186;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(to right, #1a3328, #c9a84c, transparent);
+      opacity: 0.3;
+      border-radius: 99px;
+      margin: 18px 0 22px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #4a6a5a;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .field-wrap { position: relative; }
+    .field-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      opacity: 0.4;
+    }
+    .field-input {
+      width: 100%;
+      height: 40px;
+      background: #faf8f4;
+      border: 1.5px solid #e4dfd6;
+      border-radius: 10px;
+      padding: 0 12px 0 34px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #1a3328;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .field-input::placeholder { color: #c0b8ae; font-weight: 400; }
+    .field-input:focus {
+      border-color: #1a3328;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26,51,40,0.07);
+    }
+
+    .pw-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.4;
+      display: flex;
+      align-items: center;
+      transition: opacity 0.15s;
+    }
+    .pw-eye:hover { opacity: 0.7; }
+    .field-input.has-eye { padding-right: 34px; }
+
+    .field-err {
+      font-size: 0.68rem;
+      color: #a32d2d;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      background: #1a3328;
+      color: #f5f0e8;
+      border: none;
+      border-radius: 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+    }
+    .submit-btn:hover {
+      background: #0f2418;
+      box-shadow: 0 4px 16px rgba(26,51,40,0.22);
+      transform: translateY(-1px);
+    }
+    .submit-btn:active { transform: translateY(0); box-shadow: none; }
+
+    .card-footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 0.76rem;
+      color: #9a9186;
+      font-weight: 500;
+    }
+    .card-footer a {
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .card-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fixed inset-0 z-[-1] overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center scale-110 blur-[8px]" 
+        style="background-image: url('{% static "images/coffee.webp" %}');">
+    </div>
+    
+    <div class="absolute inset-0 bg-[#1a3328]/70"></div>
+    
+    <div class="absolute inset-0 opacity-[0.03]" 
+        style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);">
+    </div>
+  </div>
+
+  <div class="page-wrap">
+
+    <div class="brand a1">
+      <p class="brand-eye">Inventory System</p>
+      <p class="brand-name">Kissy <em>Cafe</em></p>
+    </div>
+
+    <div class="card a2">
+      <div class="card-head">
+        <h1 class="card-title">Welcome back</h1>
+        <p class="card-sub">Sign in to your account to continue</p>
+      </div>
+      <div class="divider"></div>
+
+      <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="field">
+          <label class="field-label" for="id_username">Username</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 448 512">
+                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="id_username"
+              name="username"
+              class="field-input"
+              placeholder="Enter your username"
+              value="{{ form.username.value|default:'' }}"
+              autocomplete="username"
+            >
+          </div>
+          {% for error in form.username.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="id_password">Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#1a3328" viewBox="0 0 448 512">
+                <path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="id_password"
+              name="password"
+              class="field-input has-eye"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            >
+            <button type="button" class="pw-eye" onclick="togglePw('id_password', this)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#1a3328" viewBox="0 0 576 512">
+                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.4 0-14.5-1.2-21.1-3.5c-5.9 17.6-9.3 36.7-9.3 56.5c0 92.4 74.9 167.4 167.3 168A168 168 0 1 0 144 256.3c0-.1 0-.2 0-.3z"/>
+              </svg>
+            </button>
+          </div>
+          {% for error in form.password.errors %}
+          <p class="field-err">✕ {{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#f5f0e8" viewBox="0 0 512 512">
+            <path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/>
+          </svg>
+          Sign In
+        </button>
+
+      </form>
+    </div>
+
+    <p class="card-footer a3">
+      Don't have an account? <a href="{% url 'register' %}">Register →</a>
+    </p>
+
+  </div>
+
+  {% include "include/Toast.html" %}
+
+  <script>
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      btn.style.opacity = inp.type === 'text' ? '0.75' : '0.4';
+    }
+  </script>
+
+</body>
+</html>

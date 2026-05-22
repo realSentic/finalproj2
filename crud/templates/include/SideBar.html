@@ -1,0 +1,239 @@
+{% load static %}
+{% include "include/Toast.html"%}
+
+<nav class="fixed top-0 z-50 w-full h-16 bg-[#1a3328] border-b border-[#3a3220] dark:bg-gray-950 dark:border-gray-800">
+  <div class="h-full px-3 sm:px-5 flex items-center justify-between">
+
+    <!-- LEFT: Logo -->
+    <div class="flex items-center gap-3">
+      <button id="sidebar-toggle" class="lg:hidden p-2 text-[#f5f0e8] hover:bg-[#2b4b3d] rounded-lg">
+        <svg id="sidebar-toggle-icon" class="w-5 h-5 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="22" viewBox="0 0 640 512" fill="#c9a84c" class="flex-shrink-0">
+        <path d="M96 64c0-17.7 14.3-32 32-32s32 14.3 32 32v96c0 17.7-14.3 32-32 32s-32-14.3-32-32V64zM192 64c0-17.7 14.3-32 32-32s32 14.3 32 32v96c0 17.7-14.3 32-32 32s-32-14.3-32-32V64zM288 64c0-17.7 14.3-32 32-32s32 14.3 32 32v96c0 17.7-14.3 32-32 32s-32-14.3-32-32V64zM0 256c0-35.3 28.7-64 64-64H448c35.3 0 64 28.7 64 64v64c0 97.6-78.4 176-176 176H176C78.4 496 0 417.6 0 320V256zm512 64c44.2 0 80-35.8 80-80s-35.8-80-80-80H480v160h32z"/>
+      </svg>
+      <div>
+        <p class="font-serif text-[#f5f0e8] text-lg font-bold tracking-wide leading-tight m-0">Kissy Cafe</p>
+        <p class="text-[0.6rem] text-[#c9a84c] font-semibold tracking-widest uppercase leading-tight m-0">Inventory System</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Profile + Dark mode -->
+    <div class="flex items-center gap-2">
+
+      <button id="theme-toggle" type="button" onclick="window.toggleTheme && window.toggleTheme()" aria-label="Toggle dark mode"
+              class="inline-flex items-center gap-1.5 rounded-full pl-2 pr-3 py-1 text-xs font-semibold bg-[#2b4b3d] text-[#f5f0e8] hover:bg-[#47705f] dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition-all whitespace-nowrap">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0">
+          <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 512 512" class="block dark:hidden">
+            <path d="M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM352 256c0-53-43-96-96-96s-96 43-96 96s43 96 96 96s96-43 96-96z"/>
+          </svg>
+          <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 384 512" class="hidden dark:block">
+            <path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.2c-6.3-.3-12.6-.4-19-.4z"/>
+          </svg>
+        </div>
+        <span id="theme-toggle-label" class="hidden sm:inline text-xs font-medium max-w-[120px] truncate">
+          <span class="dark:hidden">Dark mode</span>
+          <span class="hidden dark:inline">Light mode</span>
+        </span>
+      </button>
+
+      <!-- Profile dropdown -->
+      <div class="relative">
+        <button type="button" id="profile-menu-button"
+                class="flex items-center gap-2 bg-[#2b4b3d] rounded-full pl-1 pr-3 py-1 hover:bg-[#47705f] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all">
+          <div class="w-7 h-7 rounded-full overflow-hidden border border-[#c9a84c]/40 bg-[#8d6f2a] flex items-center justify-center flex-shrink-0">
+            {% if admin.profile_picture %}
+              <img src="{{ admin.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover">
+            {% else %}
+              <span class="text-[#f5f0e8] text-xs font-semibold">{{ admin.first_name|slice:":1" }}</span>
+            {% endif %}
+          </div>
+          <span class="text-[#f5f0e8] text-xs font-medium hidden sm:inline max-w-[120px] truncate">{{ admin.first_name }}</span>
+        </button>
+
+        <div id="profile-dropdown"
+             class="hidden absolute right-0 z-[9999] mt-2 w-48 origin-top-right rounded-lg overflow-hidden shadow-2xl border bg-[#f5f0e8] border-[#c9a84c]/50">
+          <div class="py-2 px-4 border-b border-[#c9a84c]/30">
+            <p class="text-xs font-bold uppercase text-[#8a6d24]">{{ admin.first_name }} {{ admin.last_name }}</p>
+            <p class="text-sm text-[#1a3328]">Administrator</p>
+          </div>
+          <div class="py-1">
+            <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-sm font-semibold text-[#1a3328] hover:bg-[#ede5d4]">Dashboard</a>
+            <a href="{% url 'admin_settings' %}" class="block px-4 py-2 text-sm font-semibold text-[#1a3328] hover:bg-[#ede5d4]">Settings</a>
+            <div class="border-t my-1 border-[#c9a84c]/30"></div>
+            <a href="{% url 'signout' %}" class="block px-4 py-2 text-sm font-black text-red-700 hover:bg-red-100">Sign out</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dark mode toggle -->
+      
+
+    </div>
+  </div>
+</nav>
+
+<aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-full pt-16 bg-[#1a3328] border-r dark:border-[#3a3220] dark:bg-gray-950 border-gray-800 overflow-y-auto -translate-x-full lg:translate-x-0 transition-transform duration-300">
+  <div class="h-full px-3 py-4 overflow-y-auto">
+
+    <p class="px-2 mb-1 text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[#f5f0e8]/30">Main</p>
+    <ul class="space-y-0.5 font-medium">
+      <li>
+        <a href="{% url 'dashboard' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all duration-150 text-sm
+          {% if request.resolver_match.url_name == 'dashboard' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm320 96c0-26.9-16.5-49.9-40-59.3V88c0-13.3-10.7-24-24-24s-24 10.7-24 24V292.7c-23.5 9.5-40 32.5-40 59.3c0 35.3 28.7 64 64 64s64-28.7 64-64z"/>
+          </svg>
+          Dashboard
+        </a>
+      </li>
+    </ul>
+
+    <hr class="border-t border-[#3a3220] my-3">
+
+    <p class="px-2 mb-1 text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[#f5f0e8]/30">Inventory</p>
+    <ul class="space-y-0.5 font-medium">
+      <li>
+        <a href="{% url 'inventory_list' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'inventory_list' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 448 512">
+            <path d="M50.7 58.5L0 160H208V32H93.7C75.5 32 58.9 42.3 50.7 58.5zM240 160H448L397.3 58.5C389.1 42.3 372.5 32 354.3 32H240V160zm208 32H0V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192z"/>
+          </svg>
+          Inventory Items
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'add_inventory' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'add_inventory' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 448 512">
+            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+          </svg>
+          Add Inventory
+        </a>
+      </li>
+    </ul>
+
+    <hr class="border-t border-[#3a3220] my-3">
+
+    <p class="px-2 mb-1 text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[#f5f0e8]/30">Categories</p>
+    <ul class="space-y-0.5 font-medium">
+      <li>
+        <a href="{% url 'category_list' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'category_list' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/>
+          </svg>
+          Categories
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'add_category' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'add_category' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 448 512">
+            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+          </svg>
+          Add Category
+        </a>
+      </li>
+    </ul>
+
+    <hr class="border-t border-[#3a3220] my-3">
+
+    <p class="px-2 mb-1 text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[#f5f0e8]/30">Suppliers</p>
+    <ul class="space-y-0.5 font-medium">
+      <li>
+        <a href="{% url 'supplier_list' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'supplier_list' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 576 512">
+            <path d="M96 128a128 128 0 1 0 0-256 128 128 0 1 0 0 256zM48 224c-26.5 0-48 21.5-48 48v112c0 53 43 96 96 96h192c53 0 96-43 96-96V272c0-26.5-21.5-48-48-48H48zm400 32a96 96 0 1 0 0-192 96 96 0 1 0 0 192zm-48 32c-8.8 0-17.3 1.2-25.4 3.5 2.9 12.3 4.4 25.2 4.4 38.5v64c0 27.3-6.4 53.2-17.8 76.2H480c53 0 96-43 96-96V336c0-26.5-21.5-48-48-48H400z"/>
+          </svg>
+          Suppliers
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'add_supplier' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'add_supplier' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 448 512">
+            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+          </svg>
+          Add Supplier
+        </a>
+      </li>
+    </ul>
+
+    <hr class="border-t border-[#3a3220] my-3">
+
+    <p class="px-2 mb-1 text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[#f5f0e8]/30">Admin</p>
+    <ul class="space-y-0.5 font-medium">
+      <li>
+        <a href="{% url 'audit_log' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'audit_log' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM40 368a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
+          </svg>
+          Audit Log
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'admin_settings' %}"
+          class="flex items-center gap-3 px-2 py-2 rounded-md border-l-2 transition-all text-sm
+          {% if request.resolver_match.url_name == 'admin_settings' %}
+            bg-white/10 text-[#c9a84c] border-[#c9a84c] [&_svg]:fill-[#c9a84c]
+          {% else %}
+            text-[#f5f0e8]/70 border-transparent hover:bg-white/10 hover:text-[#f5f0e8] hover:border-white/50
+          {% endif %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M487.4 315.7l-42.6-24.6c2.6-15.1 2.6-30.8 0-45.9l42.6-24.6c7.6-4.4 10.4-14.2 6.2-22l-45.1-78.2c-4.2-7.7-13.8-10.5-21.6-6.5l-42.6 24.6c-24-20.6-51.3-36.3-80.8-45.9V48c0-8.8-7.2-16-16-16h-90.2c-8.8 0-16 7.2-16 16v49.2c-29.5 9.6-56.8 25.3-80.8 45.9L71.3 118.5c-7.8-4-17.4-1.2-21.6 6.5L4.6 203.2c-4.2 7.7-1.4 17.5 6.2 22l42.6 24.6c-2.6 15.1-2.6 30.8 0 45.9L10.8 320.3c-7.6 4.4-10.4 14.2-6.2 22l45.1 78.2c4.2 7.7 13.8 10.5 21.6 6.5l42.6-24.6c24 20.6 51.3 36.3 80.8 45.9V464c0 8.8 7.2 16 16 16h90.2c8.8 0 16-7.2 16-16v-49.2c29.5-9.6 56.8-25.3 80.8-45.9l42.6 24.6c7.8 4 17.4 1.2 21.6-6.5l45.1-78.2c4.2-7.7 1.4-17.5-6.2-22zM256 336c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z"/>
+          </svg>
+          Settings
+        </a>
+      </li>
+    </ul>
+
+  </div>
+</aside>
+
+<div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 hidden lg:hidden"></div>

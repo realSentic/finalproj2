@@ -1,0 +1,22 @@
+{
+  "name": "finalproj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "tailwindcss -i crud/static/css/input.css -o crud/static/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "flowbite": "^4.0.1",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "tailwindcss-motion": "^1.1.1"
+  }
+}

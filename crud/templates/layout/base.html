@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block 'title' %}{% endblock 'title' %}</title>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+    })();
+
+    window.toggleTheme = function() {
+      const willBeDark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', willBeDark);
+      localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
+      
+      const label = document.getElementById('theme-toggle-label');
+      const toggle = document.getElementById('theme-toggle');
+      if (label) label.textContent = willBeDark ? 'Dark mode' : 'Light mode';
+      if (toggle) toggle.setAttribute('aria-pressed', willBeDark ? 'true' : 'false');
+    };
+  </script>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  {% block 'js' %}{% endblock 'js' %} <!-- wag idelete pls-->
+  <script src="{% static 'js/loading_screen.js' %}" defer></script>
+  <script src="{% static 'js/hide_toast.js' %}" defer></script> <!-- Kent Pogi JS -->
+  <script src="{% static 'js/modals.js' %}" defer></script>
+  <script src="{% static 'js/import_csv.js' %}" defer></script>
+  <script src="{% static 'js/theme_toggle.js' %}" defer></script>
+  <script src="{% static 'js/password_match.js' %}" defer></script>
+  <script src="{% static 'js/filter_inventory.js' %}" defer></script>
+  <script src="{% static 'js/dropdown.js' %}" defer></script>
+  <script src="{% static 'js/sidebar_toggle.js' %}" defer></script>
+</head>
+<body class="bg-cream-100 text-[#1a3328] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
+
+  <div id="loading-screen" class="hidden opacity-0 fixed inset-0 z-[999999] flex items-center justify-center dark:bg-[#1a1a3a]/80 bg-[#162914]/80 backdrop-blur-sm transition-opacity duration-500">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 rounded-full border-4 border-[#f5f0e8]/20 border-t-[#f5f0e8] animate-spin"></div>
+      <p class="text-[#f5f0e8] text-sm font-semibold tracking-widest uppercase">Wait a minute!</p>
+    </div>
+  </div>
+
+  {% include "include/SideBar.html" %}
+
+  <main class="lg:ml-64 pt-16 min-h-screen bg-cream-100 text-[#1a3328] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div>
+      {% block 'content' %}{% endblock 'content' %}
+    </div>
+    <div>
+      {% block 'toast' %}{% endblock 'toast' %}
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const label = document.getElementById('theme-toggle-label');
+      const toggle = document.getElementById('theme-toggle');
+      
+      if (label) label.textContent = isDark ? 'Dark mode' : 'Light mode';
+      if (toggle) toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    });
+  </script>
+
+</body>
+</html>

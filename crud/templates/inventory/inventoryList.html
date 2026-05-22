@@ -1,0 +1,216 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block 'title' %} Inventory List {% endblock 'title' %}
+
+{% block 'js' %}
+  <script src="{% static 'js/validation.js' %}"></script>
+{% endblock 'js' %}
+
+{% block 'content' %}
+{% include "include/Toast.html"%}
+
+<div class="p-4 sm:p-6 lg:p-8">
+  <div class="flex flex-col mt-15 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold text-[#1a3328] dark:text-gray-100">Inventory</h1>
+      <p class="text-xs sm:text-sm text-[#6b6455] dark:text-gray-400 mt-0.5">All items grouped by category</p>
+    </div>
+
+    <div class="flex items-center gap-1 sm:gap-2 flex-wrap sm:ml-auto">
+      <a href="{% url 'export_inventory_csv' %}"
+        id="exportCsvBtn"
+        class="csv-btn inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-[#1a3328] dark:border-gray-600 text-[#1a3328] dark:text-gray-100 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 hover:-translate-y-0.5 active:scale-[0.98] transition-all whitespace-nowrap">
+        <span aria-hidden="true">↓</span>
+        <span>Export CSV</span>
+      </a>
+
+      <form method="POST" action="{% url 'import_inventory_csv' %}" enctype="multipart/form-data" class="inline" id="csvImportForm">
+        {% csrf_token %}
+        <input type="file" name="csv_file" id="csvFileInput" accept=".csv" class="hidden">
+        <button type="button" id="csvImportBtn" class="csv-btn inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-[#1a3328] dark:border-gray-600 text-[#1a3328] dark:text-gray-100 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 hover:-translate-y-0.5 active:scale-[0.98] transition-all whitespace-nowrap">
+          <span aria-hidden="true">↑</span>
+          <span>Import CSV</span>
+        </button>
+      </form>
+
+      <a href="{% url 'add_inventory' %}"
+        class="add-item-btn bg-[#c9a84c] dark:bg-[#c9a84c] text-[#1a1a1a] dark:text-[#1a1a1a] text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-[#b8922f] dark:hover:bg-[#b8922f] transition-all whitespace-nowrap">
+        + Add Item
+      </a>
+    </div>
+  </div><!-- ✅ this closing tag was missing, causing the filter bar to nest inside the header -->
+
+  <div class="flex flex-col sm:flex-row gap-2 mb-6">
+    <div class="relative flex-1 min-w-0">
+      <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-[#6b6455] dark:text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+      </span>
+      <input id="searchInput" type="text" placeholder="Search items..." oninput="filterInventory()"
+        class="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-lg border border-[#d9cdb8] dark:border-gray-700 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 text-[#1a3328] dark:text-gray-100 placeholder-[#6b6455] dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all"/>
+    </div>
+
+    <select id="categoryFilter" onchange="filterInventory()"
+      class="text-xs sm:text-sm rounded-lg border border-[#d9cdb8] dark:border-gray-700 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 text-[#6b6455] dark:text-gray-300 px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1a3328] dark:focus:ring-gray-400 transition-all min-w-[100px] sm:min-w-[150px]">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.category_name|lower }}">{{ category.category_name }}</option>
+      {% endfor %}
+    </select>
+
+    <select id="stockFilter" onchange="filterInventory()"
+      class="text-xs sm:text-sm rounded-lg border border-[#d9cdb8] dark:border-gray-700 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 text-[#6b6455] dark:text-gray-300 px-2 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1a3328] dark:focus:ring-gray-400 transition-all min-w-[80px] sm:min-w-[120px]">
+      <option value="">All Stock</option>
+      <option value="low">Low Stock</option>
+      <option value="in">In Stock</option>
+    </select>
+
+    <button onclick="clearFilters()"
+      class="cursor-pointer text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg border border-[#d9cdb8] dark:border-gray-700 text-[#6b6455] dark:text-gray-300 bg-[#f5f0e8] dark:bg-gray-800 hover:bg-[#ede5d4] dark:hover:bg-gray-700 transition-all whitespace-nowrap">
+      Clear
+    </button>
+  </div>
+
+  {% include 'include/Alert.html' %}
+
+  <p id="noResults" class="hidden text-center text-[#6b6455] dark:text-gray-400 mt-20 text-sm italic">No items match your search.</p>
+
+  {% for category in categories %}
+  <div class="category-block mb-8" data-category="{{ category.category_name|lower }}">
+
+    <h2 class="text-xs font-bold uppercase tracking-widest text-[#c9a84c] dark:text-amber-300 mb-2 px-1">
+      {{ category.category_name }}
+    </h2>
+
+    <!-- DESKTOP TABLE (hidden on mobile) -->
+    <div class="hidden sm:block border border-[#d9cdb8] dark:border-gray-700 shadow-sm overflow-x-auto">
+      <table class="w-full text-xs sm:text-sm text-left table-fixed">
+        <colgroup>
+          <col class="w-[28%]">
+          <col class="w-[10%]">
+          <col class="w-[10%]">
+          <col class="w-[10%]">
+          <col class="w-[12%]">
+          <col class="w-[15%]">
+          <col class="w-[15%]">
+        </colgroup>
+        <thead class="bg-[#1a3328] text-white dark:bg-[#c9a84c] dark:text-[#1f1b12]/80 uppercase tracking-wider">
+          <tr>
+            <th class="px-4 py-3 whitespace-nowrap">Item Name</th>
+            <th class="px-4 py-3 whitespace-nowrap">Unit</th>
+            <th class="px-4 py-3 whitespace-nowrap text-center">Stock</th>
+            <th class="px-4 py-3 whitespace-nowrap text-center">Reorder</th>
+            <th class="px-4 py-3 whitespace-nowrap">Unit Cost</th>
+            <th class="px-4 py-3 whitespace-nowrap text-center">Status</th>
+            <th class="px-4 py-3 text-right whitespace-nowrap">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-[#f5f0e8] dark:bg-gray-900">
+          {% for item in category.inventoryitems_set.all %}
+          <tr class="item-row border-t border-[#d9cdb8] dark:border-gray-700 hover:bg-[#ede5d4] dark:hover:bg-gray-800 transition-colors"
+              data-name="{{ item.item_name|lower }}"
+              data-stock="{% if item.current_stock <= item.reorder_level %}low{% else %}in{% endif %}">
+            <td class="px-4 py-3 font-medium text-[#1a3328] dark:text-gray-100 truncate">{{ item.item_name }}</td>
+            <td class="px-4 py-3 text-[#6b6455] dark:text-gray-300 truncate">{{ item.unit }}</td>
+            <td class="px-4 py-3 text-[#6b6455] dark:text-gray-300 text-center font-semibold">{{ item.current_stock }}</td>
+            <td class="px-4 py-3 text-[#6b6455] dark:text-gray-300 text-center">{{ item.reorder_level }}</td>
+            <td class="px-4 py-3 text-[#6b6455] dark:text-gray-300">₱{{ item.unit_cost }}</td>
+            <td class="px-4 py-3 text-center">
+              {% if item.current_stock == 0 %}
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-300 text-red-900 dark:bg-red-900/40 dark:text-red-200 whitespace-nowrap">Out of Stock</span>
+              {% elif item.current_stock <= item.reorder_level %}
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-300 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200 whitespace-nowrap">Low Stock</span>
+              {% else %}
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 whitespace-nowrap">In Stock</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-right">
+              <div class="flex justify-end gap-4">
+                <button onclick="openEditModal('{{ item.item_id }}','{{ item.item_name|escapejs }}','{{ item.unit|escapejs }}','{{ item.current_stock }}','{{ item.reorder_level }}','{{ item.unit_cost }}','{{ item.category.category_id }}')"
+                  class="font-semibold text-[#b8922f] dark:text-[#e3c97d] hover:underline whitespace-nowrap">Edit</button>
+                <button onclick="openDeleteModal('{{ item.item_id }}', '{{ item.item_name|escapejs }}')"
+                  class="font-semibold text-red-900 dark:text-red-300 hover:underline whitespace-nowrap">Delete</button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr class="empty-row">
+            <td colspan="7" class="px-4 py-6 text-center text-[#6b6455] dark:text-gray-400 text-sm italic">No items in this category yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MOBILE CARDS (hidden on desktop) -->
+    <div class="sm:hidden space-y-2">
+      {% for item in category.inventoryitems_set.all %}
+      <div class="item-row bg-[#f5f0e8] dark:bg-gray-900 border border-[#d9cdb8] dark:border-gray-700 rounded-lg p-3"
+           data-name="{{ item.item_name|lower }}"
+           data-stock="{% if item.current_stock <= item.reorder_level %}low{% else %}in{% endif %}">
+
+        <!-- Top row: name + status -->
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <span class="font-semibold text-sm text-[#1a3328] dark:text-gray-100 leading-tight">{{ item.item_name }}</span>
+          {% if item.current_stock == 0 %}
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-300 text-red-900 dark:bg-red-900/40 dark:text-red-200 whitespace-nowrap shrink-0">Out of Stock</span>
+          {% elif item.current_stock <= item.reorder_level %}
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-300 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200 whitespace-nowrap shrink-0">Low Stock</span>
+          {% else %}
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 whitespace-nowrap shrink-0">In Stock</span>
+          {% endif %}
+        </div>
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-4 gap-1 mb-3">
+          <div class="text-center">
+            <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Unit</p>
+            <p class="text-xs font-medium text-[#1a3328] dark:text-gray-100">{{ item.unit }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Stock</p>
+            <p class="text-xs font-bold text-[#1a3328] dark:text-gray-100">{{ item.current_stock }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Reorder</p>
+            <p class="text-xs font-medium text-[#1a3328] dark:text-gray-100">{{ item.reorder_level }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Cost</p>
+            <p class="text-xs font-medium text-[#1a3328] dark:text-gray-100">₱{{ item.unit_cost }}</p>
+          </div>
+        </div>
+
+        <!-- Actions row -->
+        <div class="flex gap-2 border-t border-[#d9cdb8] dark:border-gray-700 pt-2">
+          <button onclick="openEditModal('{{ item.item_id }}','{{ item.item_name|escapejs }}','{{ item.unit|escapejs }}','{{ item.current_stock }}','{{ item.reorder_level }}','{{ item.unit_cost }}','{{ item.category.category_id }}')"
+            class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-[#b8922f] text-[#b8922f] dark:text-[#e3c97d] dark:border-[#e3c97d] hover:bg-[#b8922f] hover:text-white dark:hover:bg-[#e3c97d] dark:hover:text-[#1a1a1a] transition-all">
+            Edit
+          </button>
+          <button onclick="openDeleteModal('{{ item.item_id }}', '{{ item.item_name|escapejs }}')"
+            class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-red-700 text-red-700 dark:text-red-400 dark:border-red-400 hover:bg-red-700 hover:text-white dark:hover:bg-red-400 dark:hover:text-white transition-all">
+            Delete
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-row text-center py-6 text-[#6b6455] dark:text-gray-400 text-sm italic border border-[#d9cdb8] dark:border-gray-700 rounded-lg">
+        No items in this category yet.
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+  {% empty %}
+  <p class="text-center text-[#6b6455] dark:text-gray-400 mt-20 text-sm italic">No categories found. <a href="{% url 'add_category' %}" class="text-[#1a3328] dark:text-gray-100 font-semibold hover:underline">Add one here.</a></p>
+  {% endfor %}
+
+</div>
+
+{% include "include/DeleteModal.html" %}
+{% include "include/EditModal.html" %}
+
+{% endblock 'content' %}

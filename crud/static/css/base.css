@@ -1,0 +1,146 @@
+/* Makes mouse become a hand pointer on buttons */
+button { 
+    cursor: pointer !important; 
+}
+
+/* Makes mouse become a hand pointer on dropdowns */
+select { 
+    cursor: pointer !important; 
+}
+
+/* Hidden utility class */
+.hidden {
+    display: none !important; /* Completely hides element */
+}
+
+/* =========================
+   LIGHT MODE VARIABLES
+========================= */
+:root {
+
+    /* Main website background color */
+    --bg-main: #f5f0e8;
+
+    /* Card/container background */
+    --bg-card: #ffffff;
+
+    /* Main text color */
+    --text-main: #1a3328;
+
+    /* Secondary/faded text color */
+    --text-muted: #7a7168;
+
+    /* Default border color */
+    --border-color: #e4dfd6;
+
+    /* Sidebar background */
+    --sidebar-bg: #1a3328;
+
+    /* Sidebar border color */
+    --sidebar-border: #234d3a;
+
+    /* Gold accent color */
+    --gold: #c9a84c;
+    
+    --cream:201 168 76;
+}
+
+/* =========================
+   BODY STYLING
+========================= */
+body {
+
+    /* Uses variable for background */
+    background: var(--bg-main);
+
+    /* Uses variable for text */
+    color: var(--text-main);
+
+    /* Smooth animation during dark/light switch */
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* =========================
+   RESPONSIVE UTILITIES
+========================= */
+
+/* Responsive spacing for mobile, tablet, and desktop */
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    body {
+        font-size: 15px;
+    }
+}
+
+/* Responsive table utilities */
+@media (max-width: 768px) {
+    table {
+        font-size: 13px;
+    }
+    
+    table td, table th {
+        padding: 8px 4px !important;
+    }
+}
+
+/* Responsive button utilities */
+@media (max-width: 640px) {
+    button, .btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Responsive form utilities */
+@media (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .form-group {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Responsive grid utilities */
+.grid-responsive {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1025px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Responsive flex utilities */
+.flex-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .flex-responsive {
+        flex-direction: column;
+    }
+}
+

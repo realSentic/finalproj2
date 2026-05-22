@@ -1,0 +1,34 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import "flowbite/src/themes/default";
+
+/* 1. Tell the CLI where to find your Django templates */
+/* Adjust the relative path depending on where this CSS file lives compared to your templates folder */
+@source "../../templates/**/*.html"; 
+@source "../../../templates/**/*.html";
+
+/* 2. Force class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin 'tailwindcss-motion';
+
+@theme {
+  --color-cream-50: #FDFBF7;
+  --color-cream-100: #F5F0E8;
+  --color-cream-200: #EDE6D6;
+  --color-cream-300: #DDD3BB;
+
+  --color-forest-50: #C8DDC2;
+  --color-forest-100: #A3C49A;
+  --color-forest-200: #7DBF6E;
+  --color-forest-300: #4A9460;
+  --color-forest-400: #2D6A3F;
+  --color-forest-500: #1E4D2B;
+  --color-forest-600: #163820;
+
+  --font-display: "DM Serif Display", serif;
+  --font-body: "DM Sans", sans-serif;
+}
+
+button, [type="button"], [type="submit"], [type="reset"], select {
+  cursor: pointer !important;
+}

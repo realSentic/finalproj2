@@ -1,0 +1,109 @@
+{% extends "layout/base.html" %}
+{% block 'title' %} Category List {% endblock 'title' %}
+{% block 'content' %}
+{% include "include/Toast.html"%}
+
+<div class="p-3 sm:p-6">
+
+  <!-- Header -->
+  <div class="flex flex-col mt-15 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold text-[#1a3328] dark:text-gray-100">Categories</h1>
+      <p class="text-xs sm:text-sm text-[#6b6455] dark:text-gray-400 mt-0.5">All inventory categories</p>
+    </div>
+    <button onclick="openAddCategoryModal()"
+            class="add-category-btn bg-[#1a3328] text-white dark:bg-[#c9a84c] dark:text-[#1a1a1a] text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg hover:bg-[#2b4b3d] dark:hover:bg-[#b8922f] transition-all whitespace-nowrap self-start sm:self-auto">
+      + Add Category
+    </button>
+  </div>
+
+  <!-- DESKTOP TABLE -->
+  <div class="hidden sm:block rounded-xl border border-[#d9cdb8] dark:border-gray-700 overflow-x-auto shadow-sm">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-[#1a3328] text-white dark:bg-[#c9a84c] dark:text-[#1f1b12]/80 uppercase tracking-wider">
+        <tr>
+          <th class="px-4 py-3 w-12">#</th>
+          <th class="px-4 py-3">Name</th>
+          <th class="px-4 py-3">Created</th>
+          <th class="px-4 py-3">Updated</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-[#f5f0e8] dark:bg-gray-900">
+        {% for category in categories %}
+        <tr class="border-t border-[#d9cdb8] dark:border-gray-700 hover:bg-[#ede5d4] dark:hover:bg-gray-800 transition-colors">
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400 font-semibold">{{ forloop.counter }}</td>
+          <td class="px-4 py-3 font-semibold text-[#1a3328] dark:text-gray-100">{{ category.category_name }}</td>
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400 text-sm">{{ category.created_at|date:"M d, Y" }}</td>
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400 text-sm">{{ category.updated_at|date:"M d, Y" }}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex justify-end gap-4">
+              <button onclick="openEditCategoryModal('{{ category.category_id }}', '{{ category.category_name }}')"
+                      class="text-sm font-semibold text-[#b8922f] dark:text-[#e3c97d] hover:underline">Edit</button>
+              <button onclick="openDeleteCategoryModal('{{ category.category_id }}', `{{ category.category_name|escapejs }}`)"
+                      class="text-sm font-semibold text-red-600 dark:text-red-400 hover:underline">Delete</button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="px-4 py-10 text-center text-[#6b6455] dark:text-gray-400 text-sm italic">
+            No categories yet.
+            <button onclick="openAddCategoryModal()" class="text-[#1a3328] dark:text-gray-100 font-semibold hover:underline">Add one here.</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="sm:hidden space-y-2">
+    {% for category in categories %}
+    <div class="bg-[#f5f0e8] dark:bg-gray-900 border border-[#d9cdb8] dark:border-gray-700 rounded-lg p-3">
+
+      <!-- Top row: number + name -->
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs font-bold text-[#6b6455] dark:text-gray-400 w-5 shrink-0">{{ forloop.counter }}.</span>
+        <span class="font-semibold text-sm text-[#1a3328] dark:text-gray-100 flex-1">{{ category.category_name }}</span>
+      </div>
+
+      <!-- Dates row -->
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Created</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100">{{ category.created_at|date:"M d, Y" }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Updated</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100">{{ category.updated_at|date:"M d, Y" }}</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 border-t border-[#d9cdb8] dark:border-gray-700 pt-2">
+        <button onclick="openEditCategoryModal('{{ category.category_id }}', '{{ category.category_name }}')"
+          class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-[#b8922f] text-[#b8922f] dark:text-[#e3c97d] dark:border-[#e3c97d] hover:bg-[#b8922f] hover:text-white dark:hover:bg-[#e3c97d] dark:hover:text-[#1a1a1a] transition-all">
+          Edit
+        </button>
+        <button onclick="openDeleteCategoryModal('{{ category.category_id }}', `{{ category.category_name|escapejs }}`)"
+          class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-red-600 text-red-600 dark:text-red-400 dark:border-red-400 hover:bg-red-600 hover:text-white dark:hover:bg-red-400 dark:hover:text-white transition-all">
+          Delete
+        </button>
+      </div>
+
+    </div>
+    {% empty %}
+    <div class="text-center py-10 text-[#6b6455] dark:text-gray-400 text-sm italic border border-[#d9cdb8] dark:border-gray-700 rounded-lg">
+      No categories yet.
+      <button onclick="openAddCategoryModal()" class="text-[#1a3328] dark:text-gray-100 font-semibold hover:underline">Add one here.</button>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% include "include/CategoryEditModal.html" %}
+{% include "include/CategoryDeleteModal.html" %}
+
+{% endblock 'content' %}

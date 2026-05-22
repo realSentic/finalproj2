@@ -1,0 +1,121 @@
+{% extends "layout/base.html" %}
+{% block 'title' %} Suppliers {% endblock 'title' %}
+{% block 'content' %}
+{% include "include/Toast.html"%}
+
+<div class="p-3 sm:p-6">
+  <div class="flex flex-col mt-15 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold text-[#1a3328] dark:text-gray-100">Suppliers</h1>
+      <p class="text-xs sm:text-sm text-[#6b6455] dark:text-gray-400 mt-0.5">Manage your supplier directory</p>
+    </div>
+    <a href="{% url 'add_supplier' %}"
+       class="bg-[#1a3328] dark:bg-[#c9a84c] text-white dark:text-[#1a1a1a] text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg hover:bg-[#274638] dark:hover:bg-[#d3ac48] transition-all whitespace-nowrap text-center self-start sm:self-auto">
+      + Add Supplier
+    </a>
+  </div>
+
+  <!-- DESKTOP TABLE -->
+  <div class="hidden sm:block rounded-xl border border-[#d9cdb8] dark:border-gray-700 overflow-x-auto shadow-sm">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-[#1a3328] text-white dark:bg-[#c9a84c] dark:text-[#1f1b12]/80 uppercase tracking-wider">
+        <tr>
+          <th class="px-4 py-3 w-10">#</th>
+          <th class="px-4 py-3">Supplier</th>
+          <th class="px-4 py-3">Contact</th>
+          <th class="px-4 py-3">Email</th>
+          <th class="px-4 py-3">Phone</th>
+          <th class="hidden lg:table-cell px-4 py-3">Address</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-[#f5f0e8] dark:bg-gray-900">
+        {% for supplier in suppliers %}
+        <tr class="border-t border-[#d9cdb8] dark:border-gray-700 hover:bg-[#ede5d4] dark:hover:bg-gray-800 transition-colors">
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400 font-semibold">{{ forloop.counter }}</td>
+          <td class="px-4 py-3 font-semibold text-[#1a3328] dark:text-gray-100">{{ supplier.supplier_name }}</td>
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400">{{ supplier.contact_person|default:"-" }}</td>
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400">{{ supplier.email|default:"-" }}</td>
+          <td class="px-4 py-3 text-[#6b6455] dark:text-gray-400">{{ supplier.phone_number|default:"-" }}</td>
+          <td class="hidden lg:table-cell px-4 py-3 text-[#6b6455] dark:text-gray-400 truncate">{{ supplier.address|default:"-" }}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex justify-end gap-4">
+              <button onclick="openEditSupplierModal('{{ supplier.supplier_id }}', '{{ supplier.supplier_name|escapejs }}', '{{ supplier.contact_person|escapejs }}', '{{ supplier.email|escapejs }}', '{{ supplier.phone_number|escapejs }}', '{{ supplier.address|escapejs }}')"
+                class="font-semibold text-[#b8922f] dark:text-[#e3c97d] hover:underline">Edit</button>
+              <button onclick="openDeleteSupplierModal('{{ supplier.supplier_id }}', '{{ supplier.supplier_name|escapejs }}')"
+                class="font-semibold text-red-900 dark:text-red-300 hover:underline">Delete</button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-4 py-10 text-center text-[#6b6455] dark:text-gray-400 text-sm italic">
+            No suppliers yet.
+            <a href="{% url 'add_supplier' %}" class="text-[#1a3328] dark:text-gray-100 font-semibold hover:underline">Add one here.</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="sm:hidden space-y-2">
+    {% for supplier in suppliers %}
+    <div class="bg-[#f5f0e8] dark:bg-gray-900 border border-[#d9cdb8] dark:border-gray-700 rounded-lg p-3">
+
+      <!-- Top row: number + name -->
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs font-bold text-[#6b6455] dark:text-gray-400 shrink-0">{{ forloop.counter }}.</span>
+        <span class="font-semibold text-sm text-[#1a3328] dark:text-gray-100 flex-1">{{ supplier.supplier_name }}</span>
+      </div>
+
+      <!-- Details grid -->
+      <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-3">
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Contact</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100">{{ supplier.contact_person|default:"-" }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Phone</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100">{{ supplier.phone_number|default:"-" }}</p>
+        </div>
+        <div class="col-span-2">
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Email</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100 truncate">{{ supplier.email|default:"-" }}</p>
+        </div>
+        {% if supplier.address %}
+        <div class="col-span-2">
+          <p class="text-[10px] uppercase tracking-wide text-[#6b6455] dark:text-gray-400 font-semibold">Address</p>
+          <p class="text-xs text-[#1a3328] dark:text-gray-100">{{ supplier.address }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 border-t border-[#d9cdb8] dark:border-gray-700 pt-2">
+        <button onclick="openEditSupplierModal('{{ supplier.supplier_id }}', '{{ supplier.supplier_name|escapejs }}', '{{ supplier.contact_person|escapejs }}', '{{ supplier.email|escapejs }}', '{{ supplier.phone_number|escapejs }}', '{{ supplier.address|escapejs }}')"
+          class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-[#b8922f] text-[#b8922f] dark:text-[#e3c97d] dark:border-[#e3c97d] hover:bg-[#b8922f] hover:text-white dark:hover:bg-[#e3c97d] dark:hover:text-[#1a1a1a] transition-all">
+          Edit
+        </button>
+        <button onclick="openDeleteSupplierModal('{{ supplier.supplier_id }}', '{{ supplier.supplier_name|escapejs }}')"
+          class="flex-1 py-1.5 text-xs font-semibold rounded-md border border-red-700 text-red-700 dark:text-red-400 dark:border-red-400 hover:bg-red-700 hover:text-white dark:hover:bg-red-400 dark:hover:text-white transition-all">
+          Delete
+        </button>
+      </div>
+
+    </div>
+    {% empty %}
+    <div class="text-center py-10 text-[#6b6455] dark:text-gray-400 text-sm italic border border-[#d9cdb8] dark:border-gray-700 rounded-lg">
+      No suppliers yet.
+      <a href="{% url 'add_supplier' %}" class="text-[#1a3328] dark:text-gray-100 font-semibold hover:underline">Add one here.</a>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% include "include/DeleteSupplierModal.html" %}
+{% include "include/EditSupplierModal.html" %}
+
+{% endblock 'content' %}
